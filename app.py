@@ -1,8 +1,10 @@
 from flask import request, jsonify
 from models import db, Task
 from db import create_app
+from flask_cors import CORS
 
 app = create_app()
+CORS(app)
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
