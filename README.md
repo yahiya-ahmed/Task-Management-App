@@ -14,19 +14,19 @@ Designed for student productivity with CRUD features, filtering, sorting, and op
 ### Backend (Flask)
 1. Navigate to root directory
 2. Create and activate virtualenv:  
-   `python3 -m venv venv`
-   `source venv/bin/activate`
-3. Install dependencies:
-   `pip install -r requirements.txt`
-4. Run Flask:
-   `python app.py`
+   `python3 -m venv venv`  
+   `source venv/bin/activate`  
+3. Install dependencies:  
+   `pip install -r requirements.txt`  
+4. Run Flask:  
+   `python app.py`  
 
 ### Frontend (React)
 1. Navigate to `/frontend`:
-2. Install dependencies:
-   `npm install`
-3. Run React dev server:
-   `npm start`
+2. Install dependencies:  
+   `npm install`  
+3. Run React dev server:  
+   `npm start`  
 
 ## Screenshots
 See `Appendix A` of dissertation for full implementation screenshots.
