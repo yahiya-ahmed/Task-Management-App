@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
   const [formData, setFormData] = useState({
     title: '',
     due_date: '',
@@ -117,6 +118,21 @@ function App() {
         </select>
       </div>
 
+      {/* Sort Dropdown */}
+      <div className="mb-3">
+        <label>Sort by Due Date:</label>
+        <select
+          className="form-select"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
+          <option value="none">None</option>
+          <option value="asc">Earliest First</option>
+          <option value="desc">Latest First</option>
+        </select>
+      </div>
+
+
       {/* Task List */}
       <ul className="list-group">
         {tasks
@@ -125,10 +141,18 @@ function App() {
             if (filter === 'pending') return !task.is_complete;
             return true;
           })
+          .sort((a, b) => {
+            if (sortOrder === 'asc') return new Date(a.due_date) - new Date(b.due_date);
+            if (sortOrder === 'desc') return new Date(b.due_date) - new Date(a.due_date);
+            return 0;
+          })
           .map(task => (
             <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
               <div>
                 <strong>{task.title}</strong><br />
+                <small className="text-muted">
+                  {task.category ? `${task.category} | ` : ''}Due: {task.due_date || '—'}
+                </small>
               </div>
               <div>
                 <button
