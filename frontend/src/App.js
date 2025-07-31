@@ -3,14 +3,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
   const [formData, setFormData] = useState({
     title: '',
     due_date: '',
     category: '',
     reminder_time: ''
   });
+  const [filter, setFilter] = useState('all');
+  const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
   useEffect(() => {
     fetchTasks();
@@ -28,8 +29,14 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://127.0.0.1:5000/tasks', {
-      method: 'POST',
+    const url = editingTaskId
+      ? `http://127.0.0.1:5000/tasks/${editingTaskId}`
+      : 'http://127.0.0.1:5000/tasks';
+    
+    const method = editingTaskId ? 'PUT' : 'POST';
+    
+    fetch(url, {
+      method: method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     })
@@ -37,6 +44,7 @@ function App() {
       .then(() => {
         fetchTasks();  // refresh the task list
         setFormData({ title: '', due_date: '', category: '', reminder_time: '' }); // clear form
+        setEditingTaskId(null); // reset editing state
       });
   };
 
@@ -54,6 +62,16 @@ function App() {
     })
       .then(res => res.json())
       .then(() => fetchTasks()); // Refresh list
+  };
+
+  const editTask = (task) => {
+    setFormData({
+      title: task.title,
+      due_date: task.due_date,
+      category: task.category,
+      reminder_time: task.reminder_time
+    });
+    setEditingTaskId(task.id);
   };
 
   return (
@@ -160,6 +178,12 @@ function App() {
                   className={`btn btn-sm me-2 ${task.is_complete ? 'btn-success' : 'btn-secondary'}`}
                 >
                   {task.is_complete ? 'Done' : 'Pending'}
+                </button>
+                <button
+                  onClick={() => editTask(task)}
+                  className="btn btn-sm btn-warning me-2"
+                >
+                  Edit
                 </button>
                 <button
                   onClick={() => deleteTask(task.id)}
