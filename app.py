@@ -18,7 +18,8 @@ def create_task():
         title=data.get('title'),
         due_date=data.get('due_date'),
         category=data.get('category'),
-        reminder_time=data.get('reminder_time')
+        reminder_time=data.get('reminder_time'),
+        urgency=data.get('urgency')
     )
     db.session.add(task)
     db.session.commit()
@@ -34,6 +35,7 @@ def update_task(task_id):
     task.due_date = data.get('due_date', task.due_date)
     task.category = data.get('category', task.category)
     task.reminder_time = data.get('reminder_time', task.reminder_time)
+    task.urgency = data.get('urgency', task.urgency)
     task.is_complete = data.get('is_complete', task.is_complete)
     db.session.commit()
     return jsonify(task.to_dict())
