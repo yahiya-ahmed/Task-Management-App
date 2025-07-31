@@ -13,7 +13,7 @@ Designed for student productivity with CRUD features, filtering, sorting, and op
 ## How to Run (Locally)
 ### Backend (Flask)
 1. Navigate to root directory
-2. Create and activate virtualenv:
+2. Create and activate virtualenv:  
    `python3 -m venv venv`
    `source venv/bin/activate`
 3. Install dependencies:
