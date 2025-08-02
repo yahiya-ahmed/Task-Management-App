@@ -26,11 +26,8 @@ Designed for student productivity with CRUD features, filtering, sorting, and op
    ```bash
    source venv/bin/activate
    ```
-   - **Windows (Command Prompt):**
-   ```cmd
-   venv\Scripts\activate
-   ```
    - **Windows (PowerShell):**
+   Make sure Execution Policy is not restricted
    ```powershell
    venv\Scripts\Activate.ps1
    ```
