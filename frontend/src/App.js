@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function App() {
   const API_BASE = 'http://127.0.0.1:5000';
@@ -9,7 +10,7 @@ function App() {
     due_date: '',
     category: '',
     reminder_time: '',
-    urgency: ''
+    priority: ''
   });
   const [filter, setFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
@@ -53,7 +54,7 @@ function App() {
       .then(res => res.json())
       .then(() => {
         fetchTasks();  // refresh the task list
-        setFormData({ title: '', due_date: '', category: '', reminder_time: '', urgency:'' }); // clear form
+        setFormData({ title: '', due_date: '', category: '', reminder_time: '', priority:'' }); // clear form
         setEditingTaskId(null); // reset editing state
       });
   };
@@ -64,6 +65,19 @@ function App() {
     })
       .then(res => res.json())
       .then(() => fetchTasks()); // Refresh the task list
+  };
+
+  const getPriorityIndicator = (priority) => {
+    switch (priority) {
+      case 'High':
+        return <p1 className="text-danger">!!!</p1>;
+      case 'Medium':
+        return <p1 className="text-danger">!!</p1>;
+      case 'Low':
+        return <p1 className="text-danger">!</p1>;
+      default:
+        return '';
+    }
   };
 
   const deleteTask = (id) => {
@@ -81,7 +95,8 @@ function App() {
       title: task.title,
       due_date: task.due_date,
       category: task.category,
-      reminder_time: task.reminder_time
+      reminder_time: task.reminder_time,
+      priority: task.priority
     });
     setEditingTaskId(task.id);
   };
@@ -100,7 +115,7 @@ function App() {
             type="text"
             name="title"
             className="form-control"
-            placeholder="Task title"
+            placeholder="Enter task title"
             value={formData.title}
             onChange={handleChange}
             required
@@ -122,7 +137,7 @@ function App() {
             type="text"
             name="category"
             className="form-control"
-            placeholder="Category"
+            placeholder="Enter category"
             value={formData.category}
             onChange={handleChange}
           />
@@ -138,21 +153,23 @@ function App() {
           />
         </div>
         <div className="mb-2">
-          <label htmlFor="urgency" className="form-label">Urgency (Optional)</label>
+          <label htmlFor="priority" className="form-label">Priority (Optional)</label>
           <select
-            id="urgency"
-            name="urgency"
+            id="priority"
+            name="priority"
             className="form-select"
-            value={formData.urgency || ''}
+            value={formData.priority || ''}
             onChange={handleChange}
           >
-            <option value="">Select urgency</option>
+            <option value="">None</option>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
           </select>
         </div>
-        <button className="btn btn-primary" type="submit">Add Task</button>
+        <button className="btn btn-primary" type="submit">
+          {editingTaskId ? 'Update Task' : 'Add Task'}
+        </button>
       </form>
       
       <h3 className="mb-3">My Tasks</h3>
@@ -201,12 +218,12 @@ function App() {
           .map(task => (
             <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <strong>{task.title}</strong><br />
+                <strong>{task.title} {getPriorityIndicator(task.priority)}</strong><br />
                 <small className="text-muted">
                   {task.category ? `${task.category} | ` : ''}Due: {task.due_date || '—'}
                 </small>
               </div>
-              <div>
+              <div className="d-flex">
                 <button onClick={() => toggleCompletion(task.id)} className="btn btn-sm btn-outline-secondary me-2" title="Toggle complete">
                   <i className={`bi ${task.is_complete ? 'bi-check-square-fill' : 'bi-square'}`}></i>
                 </button>

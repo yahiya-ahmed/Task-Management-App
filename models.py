@@ -8,7 +8,7 @@ class Task(db.Model):
     due_date = db.Column(db.String(50), nullable=True)
     category = db.Column(db.String(100), nullable=True)
     reminder_time = db.Column(db.String(50), nullable=True)
-    urgency = db.Column(db.String(20), nullable=True)
+    priority = db.Column(db.String(20), nullable=True)
     is_complete = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
@@ -18,6 +18,6 @@ class Task(db.Model):
             "due_date": self.due_date,
             "category": self.category,
             "reminder_time": self.reminder_time,
-            "urgency": self.urgency,
+            "priority": self.priority,
             "is_complete": self.is_complete
         }
