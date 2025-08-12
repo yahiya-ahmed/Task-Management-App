@@ -122,17 +122,22 @@ function App() {
           />
         </div>
         <div className="mb-2">
-          <label htmlFor="due_date" className="form-label">Due Date (Optional)</label>
+          <label htmlFor="due_date" className="form-label">
+            Due Date <span className="text-danger">*</span>
+            </label>
           <input
             type="date"
             name="due_date"
             className="form-control"
             value={formData.due_date}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="mb-2">
-          <label htmlFor="category" className="form-label">Category (Optional)</label>
+          <label htmlFor="category" className="form-label">
+            Category <span className="text-danger">*</span>
+            </label>
           <input
             type="text"
             name="category"
@@ -140,6 +145,7 @@ function App() {
             placeholder="Enter category"
             value={formData.category}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="mb-2">
