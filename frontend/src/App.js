@@ -15,6 +15,11 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [categoryOptions, setCategoryOptions] = useState([
+    "Work", "Study", "Personal"
+  ]);
+  const [customCategory, setCustomCategory] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   useEffect(() => {
     fetchTasks();
@@ -32,6 +37,13 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (
+      formData.category &&
+      !categoryOptions.includes(formData.category) &&
+      formData.category !== "Other"
+    ) {
+      setCategoryOptions([...categoryOptions, formData.category]);
+    }
 
     const due = new Date(formData.due_date);
     const reminder = new Date(formData.reminder_time);
@@ -45,11 +57,24 @@ function App() {
       : `${API_BASE}/tasks`;
 
     const method = editingTaskId ? 'PUT' : 'POST';
+
+    let finalCategory = formData.category;
+    if (formData.category === "Other" && customCategory.trim() !== "") {
+      finalCategory = customCategory.trim();
+      if (!categoryOptions.includes(finalCategory)) {
+        setCategoryOptions([...categoryOptions, finalCategory]);
+      }
+    }
+
+    const payload = {
+      ...formData,
+      category: finalCategory
+    };
     
     fetch(url, {
       method: method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(payload)
     })
       .then(res => res.json())
       .then(() => {
@@ -107,6 +132,8 @@ function App() {
 
       {/* Task Creation Form */}
       <form onSubmit={handleSubmit} className="mb-4">
+
+        {/* Task Title */}
         <div className="mb-2">
           <label htmlFor="title" className="form-label">
             Task Title <span className="text-danger">*</span>
@@ -121,6 +148,8 @@ function App() {
             required
           />
         </div>
+
+        {/* Due Date */}
         <div className="mb-2">
           <label htmlFor="due_date" className="form-label">
             Due Date <span className="text-danger">*</span>
@@ -134,20 +163,55 @@ function App() {
             required
           />
         </div>
+
+        {/* Category */}
         <div className="mb-2">
           <label htmlFor="category" className="form-label">
             Category <span className="text-danger">*</span>
-            </label>
-          <input
-            type="text"
-            name="category"
-            className="form-control"
-            placeholder="Enter category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          />
+          </label>
+          <select
+          id="category"
+          name="category"
+          className="form-select"
+          value={formData.category === "Other" ? "Other" : formData.category}
+          onChange={(e) => {
+            const selected = e.target.value;
+            if (selected === "Other") {
+              setFormData({ ...formData, category: "Other" });
+            } else {
+              setFormData({ ...formData, category: selected });
+              setCustomCategory('');
+            }
+          }}
+          required
+        >
+          <option value="">Select category</option>
+          {categoryOptions.map((cat, index) => (
+            <option key={index} value={cat}>{cat}</option>
+          ))}
+          <option value="Other">Other</option>
+        </select>
         </div>
+
+        {formData.category === "Other" && (
+          // Custom category input
+          <div className="mb-2">
+            <label htmlFor="customCategory" className="form-label">Custom Category</label>
+            <input
+              type="text"
+              id="customCategory"
+              name="customCategory"
+              className="form-control"
+              value={customCategory}
+              onChange={(e) => {
+                setCustomCategory(e.target.value);
+              }}
+              required
+            />
+          </div>
+        )}
+
+        {/* Reminder Time */}
         <div className="mb-2">
           <label htmlFor="reminder_time" className="form-label">Reminder Time (Optional)</label>
           <input
@@ -179,6 +243,7 @@ function App() {
       </form>
       
       <h3 className="mb-3">My Tasks</h3>
+
       {/* Filter Dropdown */}
       <div className="mb-3">
         <label>Filter:</label>
