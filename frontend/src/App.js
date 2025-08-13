@@ -237,6 +237,8 @@ function App() {
             <option value="High">High</option>
           </select>
         </div>
+        
+        {/* Submit Button */}
         <button className="btn btn-primary" type="submit">
           {editingTaskId ? 'Update Task' : 'Add Task'}
         </button>
@@ -272,6 +274,7 @@ function App() {
       </div>
 
 
+
       {/* Sort Dropdown */}
       <div className="mb-3">
         <label>Sort by Due Date:</label>
@@ -291,11 +294,11 @@ function App() {
       <ul className="list-group">
         {tasks
           .filter(task => {
-            const statusMatch =
+            const statusMatch = 
               filter === 'all' ||
               (filter === 'done' && task.is_complete) ||
               (filter === 'pending' && !task.is_complete);
-            
+
             const categoryMatch =
               categoryFilter === 'all' || task.category === categoryFilter;
 
