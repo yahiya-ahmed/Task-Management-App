@@ -241,12 +241,12 @@ function App() {
           {editingTaskId ? 'Update Task' : 'Add Task'}
         </button>
       </form>
-      
+
       <h3 className="mb-3">My Tasks</h3>
 
       {/* Filter Dropdown */}
       <div className="mb-3">
-        <label>Filter:</label>
+        <label>Filter by Status:</label>
         <select
           className="form-select"
           value={filter}
@@ -257,6 +257,20 @@ function App() {
           <option value="pending">Pending</option>
         </select>
       </div>
+      <div className="mb-3">
+        <label>Filter by Category:</label>
+        <select
+          className="form-select"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+        >
+          <option value="all">All</option>
+          {categoryOptions.map((cat, index) => (
+            <option key={index} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
+
 
       {/* Sort Dropdown */}
       <div className="mb-3">
@@ -277,9 +291,15 @@ function App() {
       <ul className="list-group">
         {tasks
           .filter(task => {
-            if (filter === 'done') return task.is_complete;
-            if (filter === 'pending') return !task.is_complete;
-            return true;
+            const statusMatch =
+              filter === 'all' ||
+              (filter === 'done' && task.is_complete) ||
+              (filter === 'pending' && !task.is_complete);
+            
+            const categoryMatch =
+              categoryFilter === 'all' || task.category === categoryFilter;
+
+            return statusMatch && categoryMatch;
           })
           .sort((a, b) => {
             if (sortOrder === 'asc') return new Date(a.due_date) - new Date(b.due_date);
