@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
+import Filters from './components/Filters';
+
+// Constants
+const API_BASE = 'http://127.0.0.1:5000';
 
 function App() {
-  const API_BASE = 'http://127.0.0.1:5000';
+  // State: Task data and form fields
   const [tasks, setTasks] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -12,19 +18,25 @@ function App() {
     reminder_time: '',
     priority: ''
   });
-  const [filter, setFilter] = useState('all');
-  const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
-  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [customCategory, setCustomCategory] = useState('');
   const [categoryOptions, setCategoryOptions] = useState([
     "Work", "Study", "Personal"
   ]);
-  const [customCategory, setCustomCategory] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
 
+  // State: Filters and editing
+  const [filter, setFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  
+  // Load tasks
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  ///////////////////
+  // API Functions //
+  ///////////////////
   const fetchTasks = () => {
     fetch(`${API_BASE}/tasks`)
       .then(res => res.json())
@@ -92,6 +104,9 @@ function App() {
       .then(() => fetchTasks()); // Refresh the task list
   };
 
+  // //////////
+  // Helpers //
+  /////////////
   const getPriorityIndicator = (priority) => {
     switch (priority) {
       case 'High':
@@ -126,154 +141,34 @@ function App() {
     setEditingTaskId(task.id);
   };
 
+  ////////////
+  // Render //
+  ////////////
   return (
     <div className="container mt-4">
       <h1 className="mb-4">Task Manager</h1>
 
       {/* Task Creation Form */}
-      <form onSubmit={handleSubmit} className="mb-4">
-
-        {/* Task Title */}
-        <div className="mb-2">
-          <label htmlFor="title" className="form-label">
-            Task Title <span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            name="title"
-            className="form-control"
-            placeholder="Enter task title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Due Date */}
-        <div className="mb-2">
-          <label htmlFor="due_date" className="form-label">
-            Due Date <span className="text-danger">*</span>
-            </label>
-          <input
-            type="date"
-            name="due_date"
-            className="form-control"
-            value={formData.due_date}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Category */}
-        <div className="mb-2">
-          <label htmlFor="category" className="form-label">
-            Category <span className="text-danger">*</span>
-          </label>
-          <select
-          id="category"
-          name="category"
-          className="form-select"
-          value={formData.category === "Other" ? "Other" : formData.category}
-          onChange={(e) => {
-            const selected = e.target.value;
-            if (selected === "Other") {
-              setFormData({ ...formData, category: "Other" });
-            } else {
-              setFormData({ ...formData, category: selected });
-              setCustomCategory('');
-            }
-          }}
-          required
-        >
-          <option value="">Select category</option>
-          {categoryOptions.map((cat, index) => (
-            <option key={index} value={cat}>{cat}</option>
-          ))}
-          <option value="Other">Other</option>
-        </select>
-        </div>
-
-        {formData.category === "Other" && (
-          // Custom category input
-          <div className="mb-2">
-            <label htmlFor="customCategory" className="form-label">Custom Category</label>
-            <input
-              type="text"
-              id="customCategory"
-              name="customCategory"
-              className="form-control"
-              value={customCategory}
-              onChange={(e) => {
-                setCustomCategory(e.target.value);
-              }}
-              required
-            />
-          </div>
-        )}
-
-        {/* Reminder Time */}
-        <div className="mb-2">
-          <label htmlFor="reminder_time" className="form-label">Reminder Time (Optional)</label>
-          <input
-            type="datetime-local"
-            name="reminder_time"
-            className="form-control"
-            value={formData.reminder_time}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-2">
-          <label htmlFor="priority" className="form-label">Priority (Optional)</label>
-          <select
-            id="priority"
-            name="priority"
-            className="form-select"
-            value={formData.priority || ''}
-            onChange={handleChange}
-          >
-            <option value="">None</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-        </div>
-        
-        {/* Submit Button */}
-        <button className="btn btn-primary" type="submit">
-          {editingTaskId ? 'Update Task' : 'Add Task'}
-        </button>
-      </form>
+      <TaskForm
+        formData={formData}
+        customCategory={customCategory}
+        categoryOptions={categoryOptions}
+        handleChange={handleChange}
+        handleCustomCategoryChange={setCustomCategory}
+        handleSubmit={handleSubmit}
+        editingTaskId={editingTaskId}      
+      />
 
       <h3 className="mb-3">My Tasks</h3>
 
       {/* Filter Dropdown */}
-      <div className="mb-3">
-        <label>Filter by Status:</label>
-        <select
-          className="form-select"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="done">Done</option>
-          <option value="pending">Pending</option>
-        </select>
-      </div>
-      <div className="mb-3">
-        <label>Filter by Category:</label>
-        <select
-          className="form-select"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          <option value="all">All</option>
-          {categoryOptions.map((cat, index) => (
-            <option key={index} value={cat}>{cat}</option>
-          ))}
-        </select>
-      </div>
-
-
+      <Filters
+        filter={filter}
+        categoryFilter={categoryFilter}
+        setFilter={setFilter}
+        setCategoryFilter={setCategoryFilter}
+        categoryOptions={categoryOptions}
+      />
 
       {/* Sort Dropdown */}
       <div className="mb-3">
@@ -289,49 +184,17 @@ function App() {
         </select>
       </div>
 
-
       {/* Task List */}
-      <ul className="list-group">
-        {tasks
-          .filter(task => {
-            const statusMatch = 
-              filter === 'all' ||
-              (filter === 'done' && task.is_complete) ||
-              (filter === 'pending' && !task.is_complete);
-
-            const categoryMatch =
-              categoryFilter === 'all' || task.category === categoryFilter;
-
-            return statusMatch && categoryMatch;
-          })
-          .sort((a, b) => {
-            if (sortOrder === 'asc') return new Date(a.due_date) - new Date(b.due_date);
-            if (sortOrder === 'desc') return new Date(b.due_date) - new Date(a.due_date);
-            return 0;
-          })
-          .map(task => (
-            <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <strong>{task.title} {getPriorityIndicator(task.priority)}</strong><br />
-                <small className="text-muted">
-                  {task.category ? `${task.category} | ` : ''}Due: {task.due_date || '—'}
-                </small>
-              </div>
-              <div className="d-flex">
-                <button onClick={() => toggleCompletion(task.id)} className="btn btn-sm btn-outline-secondary me-2" title="Toggle complete">
-                  <i className={`bi ${task.is_complete ? 'bi-check-square-fill' : 'bi-square'}`}></i>
-                </button>
-                <button onClick={() => editTask(task)} className="btn btn-sm btn-outline-warning me-2" title="Edit">
-                  <i className="bi bi-pencil"></i>
-                </button>
-                <button onClick={() => deleteTask(task.id)} className="btn btn-sm btn-outline-danger" title="Delete">
-                  <i className="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-          ))}
-      </ul>
-
+      <TaskList
+        tasks={tasks}
+        filter={filter}
+        categoryFilter={categoryFilter}
+        sortOrder={sortOrder}
+        toggleCompletion={toggleCompletion}
+        editTask={editTask}
+        deleteTask={deleteTask}
+        getPriorityIndicator={getPriorityIndicator}
+      />
     </div>
   );
 }
