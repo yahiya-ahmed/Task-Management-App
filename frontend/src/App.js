@@ -4,9 +4,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import Filters from './components/Filters';
+import { API_BASE } from './config';
 
 // Constants
-const API_BASE = 'http://127.0.0.1:5000';
 
 function App() {
   // State: Task data and form fields
@@ -37,97 +37,78 @@ function App() {
   ///////////////////
   // API Functions //
   ///////////////////
-  const fetchTasks = () => {
-    fetch(`${API_BASE}/tasks`)
-      .then(res => res.json())
-      .then(data => setTasks(data));
+
+  // Fetch tasks from the server
+  const fetchTasks = async () => {
+    // Fetch tasks from the API
+    const res = await fetch(`${API_BASE}/tasks`);
+    const data = await res.json();
+    setTasks(data);
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const createTask = async () => {
+    const finalCategory = formData.category === 'Other' ? customCategory.trim() : formData.category;
+    const payload = { ...formData, category: finalCategory };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      formData.category &&
-      !categoryOptions.includes(formData.category) &&
-      formData.category !== "Other"
-    ) {
-      setCategoryOptions([...categoryOptions, formData.category]);
+    if (formData.category === 'Other' && !categoryOptions.includes(finalCategory)) {
+      setCategoryOptions([...categoryOptions, finalCategory]);
     }
 
-    const due = new Date(formData.due_date);
-    const reminder = new Date(formData.reminder_time);
-
-    if (formData.reminder_time && reminder >= due) {
-      alert("Reminder time must be before the due date.");
-      return;
-    }
-    const url = editingTaskId
-      ? `${API_BASE}/tasks/${editingTaskId}`
-      : `${API_BASE}/tasks`;
-
-    const method = editingTaskId ? 'PUT' : 'POST';
-
-    let finalCategory = formData.category;
-    if (formData.category === "Other" && customCategory.trim() !== "") {
-      finalCategory = customCategory.trim();
-      if (!categoryOptions.includes(finalCategory)) {
-        setCategoryOptions([...categoryOptions, finalCategory]);
-      }
-    }
-
-    const payload = {
-      ...formData,
-      category: finalCategory
-    };
-    
-    fetch(url, {
-      method: method,
+    await fetch(`${API_BASE}/tasks`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(() => {
-        fetchTasks();  // refresh the task list
-        setFormData({ title: '', due_date: '', category: '', reminder_time: '', priority:'' }); // clear form
-        setEditingTaskId(null); // reset editing state
-      });
+      body: JSON.stringify(payload),
+    });
+
+    resetForm();
+    fetchTasks();
   };
 
-  const toggleCompletion = (id) => {
-    fetch(`${API_BASE}/tasks/${id}/toggle`, {
-      method: 'PATCH'
-    })
-      .then(res => res.json())
-      .then(() => fetchTasks()); // Refresh the task list
+  const updateTask = async () => {
+    const finalCategory = formData.category === 'Other' ? customCategory.trim() : formData.category;
+    const payload = { ...formData, category: finalCategory };
+
+    if (formData.category === 'Other' && !categoryOptions.includes(finalCategory)) {
+      setCategoryOptions([...categoryOptions, finalCategory]);
+    }
+
+    await fetch(`${API_BASE}/tasks/${editingTaskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    resetForm();
+    fetchTasks();
+  };
+
+  const deleteTask = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    await fetch(`${API_BASE}/tasks/${id}`, { method: 'DELETE' });
+    fetchTasks();
+  };
+
+  const toggleCompletion = async (id) => {
+    await fetch(`${API_BASE}/tasks/${id}/toggle`, { method: 'PATCH' });
+    fetchTasks();
   };
 
   // //////////
   // Helpers //
   /////////////
+
+  // Returns visual indicators based on priority level
   const getPriorityIndicator = (priority) => {
-    switch (priority) {
-      case 'High':
-        return <p1 className="text-danger">!!!</p1>;
-      case 'Medium':
-        return <p1 className="text-danger">!!</p1>;
-      case 'Low':
-        return <p1 className="text-danger">!</p1>;
-      default:
-        return '';
-    }
+    if (priority === 'High') return <span className="text-danger">!!!</span>;
+    if (priority === 'Medium') return <span className="text-danger">!!</span>;
+    if (priority === 'Low') return <span className="text-danger">!</span>;
+    return '';
   };
 
-  const deleteTask = (id) => {
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
-
-    fetch(`${API_BASE}/tasks/${id}`, {
-      method: 'DELETE'
-    })
-      .then(res => res.json())
-      .then(() => fetchTasks()); // Refresh list
+  const resetForm = () => {
+    setFormData({ title: '', due_date: '', category: '', reminder_time: '', priority: '' });
+    setCustomCategory('');
+    setEditingTaskId(null);
   };
 
   const editTask = (task) => {
@@ -135,18 +116,32 @@ function App() {
       title: task.title,
       due_date: task.due_date,
       category: task.category,
-      reminder_time: task.reminder_time,
-      priority: task.priority
+      reminder_time: task.reminder_time || '',
+      priority: task.priority || ''
     });
     setEditingTaskId(task.id);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.category === 'Other' && customCategory.trim() === '') {
+      alert('Please enter a custom category.');
+      return;
+    }
+    editingTaskId ? updateTask() : createTask();
   };
 
   ////////////
   // Render //
   ////////////
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Task Manager</h1>
+    <div className="container my-4">
+      <h2 className="mb-4">Task Manager</h2>
 
       {/* Task Creation Form */}
       <TaskForm

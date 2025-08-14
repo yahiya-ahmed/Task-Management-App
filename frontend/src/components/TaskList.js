@@ -28,7 +28,7 @@ export default function TaskList({
       if (sortOrder === 'desc') return new Date(b.due_date) - new Date(a.due_date);
       return 0;
     });
-
+    
   return (
     <ul className="list-group">
       {filteredTasks.map(task => (
