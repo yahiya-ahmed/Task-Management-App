@@ -7,7 +7,8 @@ export default function TaskForm({
   handleChange,
   handleCustomCategoryChange,
   handleSubmit,
-  editingTaskId
+  editingTaskId,
+  handleCancelEdit
 }) {
   return (
     <form onSubmit={handleSubmit} className="mb-4">
@@ -121,9 +122,22 @@ export default function TaskForm({
       </div>
 
       {/* Submit Button */}
-      <button className="btn btn-primary" type="submit">
-        {editingTaskId ? 'Update Task' : 'Add Task'}
-      </button>
+      <div className="d-flex gap-2">
+        {/* Switch between Add and Update */}
+        <button className="btn btn-primary" type="submit">
+          {editingTaskId ? 'Update Task' : 'Add Task'}
+        </button>
+
+        {editingTaskId && (
+          <button
+            type="button"
+            className=" btn btn-secondary"
+            onClick={handleCancelEdit}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
       
     </form>
   )

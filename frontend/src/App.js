@@ -136,6 +136,10 @@ function App() {
     editingTaskId ? updateTask() : createTask();
   };
 
+  const handleCancelEdit = () => {
+    resetForm();
+  };
+
   ////////////
   // Render //
   ////////////
@@ -151,7 +155,8 @@ function App() {
         handleChange={handleChange}
         handleCustomCategoryChange={setCustomCategory}
         handleSubmit={handleSubmit}
-        editingTaskId={editingTaskId}      
+        editingTaskId={editingTaskId}
+        handleCancelEdit={handleCancelEdit}
       />
 
       <h3 className="mb-3">My Tasks</h3>
