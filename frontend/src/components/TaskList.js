@@ -24,6 +24,12 @@ export default function TaskList({
       return statusMatch && categoryMatch;
     })
     .sort((a, b) => {
+      // Incomplete tasks come first
+      if (a.is_complete !== b.is_complete) {
+        return a.is_complete ? 1 : -1;
+      }
+
+      // Then sort by due date
       if (sortOrder === 'asc') return new Date(a.due_date) - new Date(b.due_date);
       if (sortOrder === 'desc') return new Date(b.due_date) - new Date(a.due_date);
       return 0;
