@@ -13,8 +13,12 @@ export default function TaskList({
 }) {
   const filteredTasks = tasks
     .filter(task => {
+      // Get today's date in YYYY-MM-DD format
+      const todayStr = new Date().toISOString().split('T')[0];
+
       const statusMatch =
         filter === 'all' ||
+        (filter === 'today' && task.due_date === todayStr) ||
         (filter === 'done' && task.is_complete) ||
         (filter === 'pending' && !task.is_complete);
 

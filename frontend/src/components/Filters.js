@@ -20,6 +20,7 @@ export default function Filters({
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="all">All</option>
+          <option value="today">Due Today</option>
           <option value="done">Done</option>
           <option value="pending">Pending</option>
         </select>

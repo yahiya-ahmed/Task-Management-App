@@ -147,19 +147,7 @@ function App() {
     <div className="container my-4">
       <h2 className="mb-4">Task Manager</h2>
 
-      {/* Task Creation Form */}
-      <TaskForm
-        formData={formData}
-        customCategory={customCategory}
-        categoryOptions={categoryOptions}
-        handleChange={handleChange}
-        handleCustomCategoryChange={setCustomCategory}
-        handleSubmit={handleSubmit}
-        editingTaskId={editingTaskId}
-        handleCancelEdit={handleCancelEdit}
-      />
-
-      <h3 className="mb-3">My Tasks</h3>
+      <h4 className="mb-3">My Tasks</h4>
 
       {/* Filter Dropdown */}
       <Filters
@@ -183,7 +171,7 @@ function App() {
           <option value="desc">Latest First</option>
         </select>
       </div>
-
+      
       {/* Task List */}
       <TaskList
         tasks={tasks}
@@ -194,6 +182,19 @@ function App() {
         editTask={editTask}
         deleteTask={deleteTask}
         getPriorityIndicator={getPriorityIndicator}
+      />
+
+      <h4 className="my-4">Create a New Task</h4>
+      {/* Task Creation Form */}
+      <TaskForm
+        formData={formData}
+        customCategory={customCategory}
+        categoryOptions={categoryOptions}
+        handleChange={handleChange}
+        handleCustomCategoryChange={setCustomCategory}
+        handleSubmit={handleSubmit}
+        editingTaskId={editingTaskId}
+        handleCancelEdit={handleCancelEdit}
       />
     </div>
   );
