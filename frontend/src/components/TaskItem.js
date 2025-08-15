@@ -22,7 +22,7 @@ export default function TaskItem({ task, toggleCompletion, editTask, deleteTask,
           <span className="text-danger">
             {getPriorityIndicator(task.priority)}
           </span>
-        </strong><br />
+        </strong>
         <small className="text-muted">
           {task.category && `${task.category} | `}
           Due:{' '}
@@ -33,7 +33,7 @@ export default function TaskItem({ task, toggleCompletion, editTask, deleteTask,
           </span>
         </small>
       </div>
-      <div>
+      <div className="btn-group ms-3">
         <button
           onClick={() => toggleCompletion(task.id)}
           className="btn btn-sm btn-outline-secondary me-2"
