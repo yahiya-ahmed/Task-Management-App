@@ -13,9 +13,16 @@ const getDueDateStyle = (dueDate) => {
 
 export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator }) {
   return (
-    <li className="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <strong>{task.title} {getPriorityIndicator(task.priority)}</strong><br />
+    <li className={"list-group-item d-flex justify-content-between align-items-center"}>
+      <div className={task.is_complete ? 'opacity-50' : ''}>
+        <strong
+          className={`d-block ${task.is_complete ? 'text-decoration-line-through text-muted' : ''}`}
+        >
+          {task.title}{' '} 
+          <span className="text-danger">
+            {getPriorityIndicator(task.priority)}
+          </span>
+        </strong><br />
         <small className="text-muted">
           {task.category && `${task.category} | `}
           Due:{' '}
