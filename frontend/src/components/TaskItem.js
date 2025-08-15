@@ -27,7 +27,9 @@ export default function TaskItem({ task, toggleCompletion, editTask, deleteTask,
           {task.category && `${task.category} | `}
           Due:{' '}
           <span className={getDueDateStyle(task.due_date)}>
-            {task.due_date || '-'}
+            {task.due_date || '-'} {' '}
+            {getDueDateStyle(task.due_date) === 'text-warning' && '(Today)'}
+            {getDueDateStyle(task.due_date) === 'text-danger' && '(Overdue)'}
           </span>
         </small>
       </div>
