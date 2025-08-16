@@ -203,6 +203,7 @@ function App() {
         getPriorityIndicator={getPriorityIndicator}
       />
 
+      {/* Task Form Modal */}
       <TaskModal
         show={showForm}
         onClose={() => {
@@ -218,33 +219,6 @@ function App() {
         handleCancelEdit={handleCancelEdit}
         editingTaskId={editingTaskId}
       />
-
-      {/* <Modal show={showForm} onHide={() => {
-        handleCancelEdit();
-        setShowForm(false);
-      }}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingTaskId ? 'Edit Task' : 'Add Task'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <TaskForm
-            formData={formData}
-            customCategory={customCategory}
-            categoryOptions={categoryOptions}
-            handleChange={handleChange}
-            handleCustomCategoryChange={setCustomCategory}
-            handleSubmit={(e) => {
-              handleSubmit(e);
-              setShowForm(false); // Close the modal after submission
-            }}
-            handleCancelEdit={() => {
-              handleCancelEdit();
-              setShowForm(false);
-            }}
-            editingTaskId={editingTaskId}
-          />
-        </Modal.Body>
-      </Modal> */}
     </div>
   );
 }
