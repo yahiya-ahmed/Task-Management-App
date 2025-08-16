@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Modal } from 'react-bootstrap';
+import ThemeSwitcher from './components/ThemeSwitcher';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import Filters from './components/Filters';
@@ -153,7 +154,10 @@ function App() {
   ////////////
   return (
     <div className="container my-4">
-      <h2 className="mb-4">Task Manager</h2>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Task Manager</h2>
+        <ThemeSwitcher />
+      </div>
 
       <h4 className="mb-3">My Tasks</h4>
 
