@@ -11,7 +11,7 @@ export default function TaskForm({
   handleCancelEdit
 }) {
   return (
-    <form onSubmit={handleSubmit} className="my-4">
+    <form onSubmit={handleSubmit}>
 
       {/* Title */}
       <div className="mb-2">

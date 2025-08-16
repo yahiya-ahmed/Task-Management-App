@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import TaskForm from './components/TaskForm';
@@ -22,6 +23,7 @@ function App() {
   const [categoryOptions, setCategoryOptions] = useState([
     "Work", "Study", "Personal"
   ]);
+  const [showForm, setShowForm] = useState(false);
 
   // State: Filters and editing
   const [filter, setFilter] = useState('all');
@@ -120,6 +122,7 @@ function App() {
       priority: task.priority || ''
     });
     setEditingTaskId(task.id);
+    setShowForm(true);
   };
 
   const handleChange = (e) => {
@@ -131,6 +134,11 @@ function App() {
     e.preventDefault();
     if (formData.category === 'Other' && customCategory.trim() === '') {
       alert('Please enter a custom category.');
+      return;
+    }
+
+    if (formData.title.trim() === '') {
+      alert('Please enter a title.');
       return;
     }
     editingTaskId ? updateTask() : createTask();
@@ -171,6 +179,14 @@ function App() {
           <option value="desc">Latest First</option>
         </select>
       </div>
+
+      {/* Add Task Button */}
+      <button
+        className="btn btn-success mb-3"
+        onClick={() => setShowForm(true)}
+      >
+        <i className="bi bi-plus-circle me-1"></i> Add Task
+      </button>
       
       {/* Task List */}
       <TaskList
@@ -184,9 +200,36 @@ function App() {
         getPriorityIndicator={getPriorityIndicator}
       />
 
-      <h4 className="my-4">Create a New Task</h4>
+      <Modal show={showForm} onHide={() => {
+        handleCancelEdit();
+        setShowForm(false);
+      }}>
+        <Modal.Header closeButton>
+          <Modal.Title>{editingTaskId ? 'Edit Task' : 'Add Task'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <TaskForm
+            formData={formData}
+            customCategory={customCategory}
+            categoryOptions={categoryOptions}
+            handleChange={handleChange}
+            handleCustomCategoryChange={setCustomCategory}
+            handleSubmit={(e) => {
+              handleSubmit(e);
+              setShowForm(false); // Close the modal after submission
+            }}
+            handleCancelEdit={() => {
+              handleCancelEdit();
+              setShowForm(false);
+            }}
+            editingTaskId={editingTaskId}
+          />
+        </Modal.Body>
+      </Modal>
+
+      {/* <h4 className="my-4">Create a New Task</h4> */}
       {/* Task Creation Form */}
-      <TaskForm
+      {/* <TaskForm
         formData={formData}
         customCategory={customCategory}
         categoryOptions={categoryOptions}
@@ -195,7 +238,7 @@ function App() {
         handleSubmit={handleSubmit}
         editingTaskId={editingTaskId}
         handleCancelEdit={handleCancelEdit}
-      />
+      /> */}
     </div>
   );
 }
