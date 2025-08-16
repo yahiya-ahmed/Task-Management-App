@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Modal } from 'react-bootstrap';
 import ThemeSwitcher from './components/ThemeSwitcher';
-import TaskForm from './components/TaskForm';
+import TaskModal from './components/TaskModal';
 import TaskList from './components/TaskList';
 import Filters from './components/Filters';
 import { API_BASE } from './config';
@@ -204,7 +203,23 @@ function App() {
         getPriorityIndicator={getPriorityIndicator}
       />
 
-      <Modal show={showForm} onHide={() => {
+      <TaskModal
+        show={showForm}
+        onClose={() => {
+          handleCancelEdit();
+          setShowForm(false);
+        }}
+        onSubmit={handleSubmit}
+        formData={formData}
+        handleChange={handleChange}
+        handleCustomCategoryChange={setCustomCategory}
+        categoryOptions={categoryOptions}
+        customCategory={customCategory}
+        handleCancelEdit={handleCancelEdit}
+        editingTaskId={editingTaskId}
+      />
+
+      {/* <Modal show={showForm} onHide={() => {
         handleCancelEdit();
         setShowForm(false);
       }}>
@@ -229,20 +244,7 @@ function App() {
             editingTaskId={editingTaskId}
           />
         </Modal.Body>
-      </Modal>
-
-      {/* <h4 className="my-4">Create a New Task</h4> */}
-      {/* Task Creation Form */}
-      {/* <TaskForm
-        formData={formData}
-        customCategory={customCategory}
-        categoryOptions={categoryOptions}
-        handleChange={handleChange}
-        handleCustomCategoryChange={setCustomCategory}
-        handleSubmit={handleSubmit}
-        editingTaskId={editingTaskId}
-        handleCancelEdit={handleCancelEdit}
-      /> */}
+      </Modal> */}
     </div>
   );
 }
