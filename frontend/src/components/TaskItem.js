@@ -11,6 +11,13 @@ const getDueDateStyle = (dueDate) => {
   return 'text-muted';                      // Upcoming
 };
 
+const isReminderDue = (reminderTime) => {
+  if (!reminderTime) return false;
+  const now = new Date();
+  const reminder = new Date(reminderTime);
+  return now >= reminder;
+};
+
 export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator }) {
   return (
     <li className={"list-group-item d-flex justify-content-between align-items-center"}>
@@ -31,6 +38,10 @@ export default function TaskItem({ task, toggleCompletion, editTask, deleteTask,
             {getDueDateStyle(task.due_date) === 'text-warning' && '(Today)'}
             {getDueDateStyle(task.due_date) === 'text-danger' && '(Overdue)'}
           </span>
+          {isReminderDue(task.reminder_time) && (
+            <span className="badge bg-warning text-dark ms-2">Reminder</span>
+          )}
+
         </small>
       </div>
       <div className="btn-group ms-3">
