@@ -9,7 +9,8 @@ export default function TaskList({
   toggleCompletion,
   editTask,
   deleteTask,
-  getPriorityIndicator
+  getPriorityIndicator,
+  openTaskDetail
 }) {
   const filteredTasks = tasks
     .filter(task => {
@@ -49,6 +50,7 @@ export default function TaskList({
           editTask={editTask}
           deleteTask={deleteTask}
           getPriorityIndicator={getPriorityIndicator}
+          openTaskDetail={openTaskDetail}
         />
       ))}
     </ul>

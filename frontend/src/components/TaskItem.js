@@ -18,12 +18,14 @@ const isReminderDue = (reminderTime) => {
   return now >= reminder;
 };
 
-export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator }) {
+export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator, openTaskDetail }) {
   return (
     <li className={"list-group-item d-flex justify-content-between align-items-center"}>
       <div className={task.is_complete ? 'opacity-50' : ''}>
         <strong
           className={`d-block ${task.is_complete ? 'text-decoration-line-through text-muted' : ''}`}
+          onClick={() => openTaskDetail(task)}
+          style={{ cursor: 'pointer', textDecoration: 'underline' }}
         >
           {task.title}{' '} 
           <span className="text-danger">
