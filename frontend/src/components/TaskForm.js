@@ -78,7 +78,9 @@ export default function TaskForm({
       {/* Custom Category Input */}
       {formData.category === "Other" && (
         <div className="mb-2">
-          <label htmlFor="customCategory" className="form-label">Custom Category</label>
+          <label htmlFor="customCategory" className="form-label">
+            Custom Category <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             id="customCategory"
