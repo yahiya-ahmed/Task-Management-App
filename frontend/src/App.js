@@ -5,6 +5,7 @@ import ThemeSwitcher from './components/ThemeSwitcher';
 import TaskModal from './components/TaskModal';
 import TaskList from './components/TaskList';
 import Filters from './components/Filters';
+import TaskDetailModal from './components/TaskDetailModal';
 import { API_BASE } from './config';
 
 // Constants
@@ -30,6 +31,10 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState('none'); // 'asc' or 'desc'
   const [editingTaskId, setEditingTaskId] = useState(null);
+
+  // State: Task detail modal
+  const [showTaskDetail, setShowTaskDetail] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   
   // Load tasks
   useEffect(() => {
@@ -95,6 +100,19 @@ function App() {
     fetchTasks();
   };
 
+  const updateTaskDetails = async (id, notes, subtasks) => {
+    const task = tasks.find(t => t.id === id);
+    const updated = { ...task, notes, subtasks };
+
+    await fetch(`${API_BASE}/tasks/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+
+    fetchTasks();
+  };
+
   // //////////
   // Helpers //
   /////////////
@@ -146,6 +164,11 @@ function App() {
 
   const handleCancelEdit = () => {
     resetForm();
+  };
+
+  const openTaskDetail = (task) => {
+    setSelectedTask(task);
+    setShowTaskDetail(true);
   };
 
   ////////////
@@ -201,6 +224,7 @@ function App() {
         editTask={editTask}
         deleteTask={deleteTask}
         getPriorityIndicator={getPriorityIndicator}
+        openTaskDetail={openTaskDetail}
       />
 
       {/* Task Form Modal */}
@@ -218,6 +242,14 @@ function App() {
         customCategory={customCategory}
         handleCancelEdit={handleCancelEdit}
         editingTaskId={editingTaskId}
+      />
+
+      {/* Task Detail Modal */}
+      <TaskDetailModal
+        show={showTaskDetail}
+        onClose={() => setShowTaskDetail(false)}
+        task={selectedTask}
+        updateTaskDetails={updateTaskDetails}
       />
     </div>
   );

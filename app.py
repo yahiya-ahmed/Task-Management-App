@@ -2,6 +2,7 @@ from flask import request, jsonify
 from models import db, Task
 from db import create_app
 from flask_cors import CORS
+import json
 
 app = create_app()
 CORS(app)
@@ -19,7 +20,9 @@ def create_task():
         due_date=data.get('due_date'),
         category=data.get('category'),
         reminder_time=data.get('reminder_time'),
-        priority=data.get('priority')
+        priority=data.get('priority'),
+        notes=data.get('notes', ''),
+        subtasks_json=json.dumps(data.get('subtasks', []))
     )
     db.session.add(task)
     db.session.commit()
@@ -30,13 +33,18 @@ def update_task(task_id):
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
+    
     data = request.json
+
     task.title = data.get('title', task.title)
     task.due_date = data.get('due_date', task.due_date)
     task.category = data.get('category', task.category)
     task.reminder_time = data.get('reminder_time', task.reminder_time)
     task.priority = data.get('priority', task.priority)
     task.is_complete = data.get('is_complete', task.is_complete)
+    task.notes = data.get('notes', task.notes)
+    task.subtasks_json = json.dumps(data.get('subtasks', json.loads(task.subtasks_json or '[]')))
+
     db.session.commit()
     return jsonify(task.to_dict())
 

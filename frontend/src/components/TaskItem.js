@@ -18,10 +18,13 @@ const isReminderDue = (reminderTime) => {
   return now >= reminder;
 };
 
-export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator }) {
+export default function TaskItem({ task, toggleCompletion, editTask, deleteTask, getPriorityIndicator, openTaskDetail }) {
   return (
     <li className={"list-group-item d-flex justify-content-between align-items-center"}>
-      <div className={task.is_complete ? 'opacity-50' : ''}>
+      <div className={`${task.is_complete ? 'opacity-50' : ''} flex-grow-1 border-end`}
+        onClick={() => openTaskDetail(task)}
+        style={{ cursor: 'pointer' }}
+      >
         <strong
           className={`d-block ${task.is_complete ? 'text-decoration-line-through text-muted' : ''}`}
         >
@@ -35,15 +38,24 @@ export default function TaskItem({ task, toggleCompletion, editTask, deleteTask,
           Due:{' '}
           <span className={getDueDateStyle(task.due_date)}>
             {task.due_date || '-'} {' '}
-            {getDueDateStyle(task.due_date) === 'text-warning' && '(Today)'}
-            {getDueDateStyle(task.due_date) === 'text-danger' && '(Overdue)'}
+            {getDueDateStyle(task.due_date) === 'text-warning'}
+            {getDueDateStyle(task.due_date) === 'text-danger'}
           </span>
           {isReminderDue(task.reminder_time) && (
             <span className="badge bg-warning text-dark ms-2">Reminder</span>
           )}
 
+          {/* Show icon if notes or subtasks exists */}
+          {(task.notes || (task.subtasks?.length > 0)) && (
+            <span className="ms-2 text-info">
+              <i className="bi bi-card-text me-1"></i>
+              Details
+            </span>
+          )}
         </small>
       </div>
+      
+      {/* Task Actions */}
       <div className="btn-group ms-3">
         <button
           onClick={() => toggleCompletion(task.id)}
