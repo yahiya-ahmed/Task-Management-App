@@ -68,5 +68,7 @@ def delete_task(task_id):
     return jsonify({'message': 'Task deleted'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(port=5001, debug=True)
+
+    # For external access
+    # app.run(host='0.0.0.0', port=5001, debug=True)
