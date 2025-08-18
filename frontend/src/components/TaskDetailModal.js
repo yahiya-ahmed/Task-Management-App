@@ -46,11 +46,28 @@ export default function TaskDetailModal({
     onClose();
   };
 
+  const resetState = () => {
+    if (task) {
+      setNotes(task.notes || '');
+      setSubtasks(task.subtasks || []);
+    }
+    setNewSubtask('');
+  };
+
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <Modal
+      show={show}
+      onHide={() => {
+        resetState();
+        onClose();
+      }}
+      centered
+    >
+      
       <Modal.Header closeButton>
         <Modal.Title>Task Details</Modal.Title>
       </Modal.Header>
+      
       <Modal.Body>
         <Form.Group>
           <Form.Label>Notes</Form.Label>
@@ -97,8 +114,16 @@ export default function TaskDetailModal({
           </div>
         </div>
       </Modal.Body>
+
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            resetState();
+            onClose();
+          }}
+        >Cancel
+        </Button>
         <Button variant="primary" onClick={handleSave}>Save</Button>
       </Modal.Footer>
     </Modal>
