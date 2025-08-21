@@ -8,6 +8,17 @@ import Filters from './components/Filters';
 import TaskDetailModal from './components/TaskDetailModal';
 import { API_BASE } from './config';
 
+/**
+ * React client for the Task Manager.
+ * - Fetches tasks from Flask API
+ * - Create / update / delete / toggle completion
+ * - Filters (status, category) + sort by due date
+ * - Detail modal for notes + simple subtasks
+ * Visual semantics:
+ * - overdue = red, due today = amber
+ * - completed shown below pending with strikethrough/fade
+ */
+
 // Constants
 
 function App() {
@@ -38,6 +49,7 @@ function App() {
   
   // Load tasks
   useEffect(() => {
+    // Fetch all tasks from Flask
     fetchTasks();
   }, []);
 
@@ -53,7 +65,11 @@ function App() {
     setTasks(data);
   };
 
+  // Frontend validates required fields for UX; backend accepts and stores the payload and returns the task.
   const createTask = async () => {
+    // Custom category handling:
+    // Keep the select's visible value separate from the stored category until submit.
+    // Prevents the "input disappears" issue when switching away from "Other".
     const finalCategory = formData.category === 'Other' ? customCategory.trim() : formData.category;
     const payload = { ...formData, category: finalCategory };
 
@@ -71,7 +87,11 @@ function App() {
     fetchTasks();
   };
 
+  // Frontend validates required fields for UX; backend accepts and stores the payload and returns the task.
   const updateTask = async () => {
+    // Custom category handling:
+    // Keep the select's visible value separate from the stored category until submit.
+    // Prevents the "input disappears" issue when switching away from "Other".
     const finalCategory = formData.category === 'Other' ? customCategory.trim() : formData.category;
     const payload = { ...formData, category: finalCategory };
 
@@ -89,6 +109,7 @@ function App() {
     fetchTasks();
   };
 
+  // Confirm before delete to avoid accidental loss (change based on user feedback).
   const deleteTask = async (id) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     await fetch(`${API_BASE}/tasks/${id}`, { method: 'DELETE' });
@@ -178,6 +199,7 @@ function App() {
     <div className="container my-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Task Manager</h2>
+        {/* // Theme: "dark" | "light" | "auto" (system). Defaults to dark */}
         <ThemeSwitcher />
       </div>
 

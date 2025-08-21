@@ -4,16 +4,32 @@ from db import create_app
 from flask_cors import CORS
 import json
 
+"""
+Task Manager API (Flask)
+
+CRUD + completion toggle for tasks.
+JSON in/out. SQLite via SQLAlchemy.
+CORS enabled so the React client can call this during development.
+"""
+
 app = create_app()
 CORS(app)
+# React dev server runs on a different origin; CORS allows those browser requests.
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
+    """List all tasks as JSON (200)"""
     tasks = Task.query.all()
     return jsonify([task.to_dict() for task in tasks])
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
+    """
+    Create a task from JSON.
+    Frontend enforces title/due_date/category.
+    Backend stores and returns task (201).
+    """
+    # Frontend enforces required fields
     data = request.json
     task = Task(
         title=data.get('title'),
@@ -30,10 +46,12 @@ def create_task():
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
+    """Replace fields for task <id>. 404 if not found, otherwise 200 with updated task."""
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
     
+    # Frontend enforces required fields
     data = request.json
 
     task.title = data.get('title', task.title)
@@ -50,6 +68,7 @@ def update_task(task_id):
 
 @app.route('/tasks/<int:task_id>/toggle', methods=['PATCH'])
 def toggle_task_completion(task_id):
+    """Flip is_complete for task <id>. 404 if not found, otherwise returns updated JSON (200)"""
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
@@ -60,6 +79,7 @@ def toggle_task_completion(task_id):
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
+    """Delete task <task_id>. 404 if not found, otherwise returns confirmation JSON (200)"""
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
@@ -69,6 +89,7 @@ def delete_task(task_id):
 
 if __name__ == '__main__':
     app.run(port=5001, debug=True)
-
+    # Dev server on port 5001 (React typically on 3000). CORS handles cross-origin during dev.
+    
     # For external access
     # app.run(host='0.0.0.0', port=5001, debug=True)
