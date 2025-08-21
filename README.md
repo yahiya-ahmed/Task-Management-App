@@ -9,9 +9,14 @@ Designed for student productivity with CRUD features, filtering, sorting, and op
 - npm (comes with Node.js)
 
 ## Features
-- Add, update, delete, and toggle tasks
-- Filter by status (Done / Pending)
+- Add, update, delete, and toggle task completion
+- Filter by status and category
 - Sort tasks by due date
+- Priority levels indicated by exclamation marks (!/!!/!!!)
+- Visual urgency cues for overdue and today's tasks
+- Responsive UI with dark/light/auto theme dropdown
+- Editable notes and subtasks per task (via modal)
+- Confirmation prompts for deletion
 - React + Bootstrap frontend
 - Flask + SQLite backend
 
